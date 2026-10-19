@@ -15,72 +15,72 @@
       "id": "narNory_photos:1",
       "source": "narNory_photos",
       "caption": "Our Special Moment",
-      "path": "assets/memories/gallery-local-02.jpg",
+      "path": "assets/memories/replacement-narNory_photos-1.jpg",
       "mimeType": "image/jpeg",
-      "bytes": 86766,
-      "sha256": "5bb382106ba1fa5e907c07a867d97f8d53032badd83c1ade282f1d6b79e49042"
+      "bytes": 107884,
+      "sha256": "647f3ef5b0d06b105c2653a3d7f43c59a39b33c9ac316d0a84109cf17d196dd3"
     },
     {
       "id": "narnory-memories.photos:0",
       "source": "narnory-memories.photos",
       "caption": "Sunset together ♡",
       "mimeType": "image/jpeg",
-      "sha256": "3955bb116892828d0de05c8980666a422495358e20d94e4204488c90eaf06072",
-      "path": "assets/memories/gallery-shared-01.jpg",
-      "bytes": 73728
+      "sha256": "1a2920237bd1b87e31cb01494b80e428f754dfcd2b94e1def0588686958994f8",
+      "path": "assets/memories/replacement-narnory-memories-photos-0.jpg",
+      "bytes": 212202
     },
     {
       "id": "narnory-memories.photos:1",
       "source": "narnory-memories.photos",
       "caption": "My happiness ♥",
       "mimeType": "image/jpeg",
-      "sha256": "857c228a12aa75439ac7c3c1ca139b4dd7830b4d4c3b60996d88cc295fd61e56",
-      "path": "assets/memories/gallery-shared-02.jpg",
-      "bytes": 99470
+      "sha256": "952c01f1c2e2a8da996d80b0f402ea2a3808f82a5d1667aeb7d57a542e2b4def",
+      "path": "assets/memories/replacement-narnory-memories-photos-1.jpg",
+      "bytes": 209396
     },
     {
       "id": "narnory-memories.photos:2",
       "source": "narnory-memories.photos",
       "caption": "Good vibes ♡",
       "mimeType": "image/jpeg",
-      "sha256": "521a7098a01e669746715cf160dbf8cbb5d7fc4aa24deb2c1e08a021de881fcb",
-      "path": "assets/memories/gallery-shared-03.jpg",
-      "bytes": 72470
+      "sha256": "1a144bb68e0b7e7b4357abdf91dd141c20e193a16f9dcdf9e12b96dc51b61547",
+      "path": "assets/memories/replacement-narnory-memories-photos-2.jpg",
+      "bytes": 77633
     },
     {
       "id": "narnory-memories.photos:3",
       "source": "narnory-memories.photos",
       "caption": "Always us ♥",
       "mimeType": "image/jpeg",
-      "sha256": "3700138c883074b6bebc916811709fcd58ec16d763be8c0512efc33252193ced",
-      "path": "assets/memories/gallery-shared-04.jpg",
-      "bytes": 77672
+      "sha256": "376845cf92267854820a642d214e0dd922272ec30cafe9aebb5c0ac68f302d6c",
+      "path": "assets/memories/replacement-narnory-memories-photos-3.jpg",
+      "bytes": 107025
     },
     {
       "id": "narnory-memories.photos:4",
       "source": "narnory-memories.photos",
       "caption": "Better together ♡",
       "mimeType": "image/jpeg",
-      "sha256": "c8c33f4703ebfc6b8236b1c3389e60c38afc09b710ee19d69a25e39f4c795880",
-      "path": "assets/memories/gallery-shared-05.jpg",
-      "bytes": 50692
+      "sha256": "de77c4c1b3b03040a71476ecb4f48d2f5f9b8296a34f6631227879132b58db9e",
+      "path": "assets/memories/replacement-narnory-memories-photos-4.jpg",
+      "bytes": 81124
     },
     {
       "id": "narnory-memories.photos:5",
       "source": "narnory-memories.photos",
       "caption": "Next adventure ♥",
       "mimeType": "image/jpeg",
-      "sha256": "c5c87769570ef93e003a4444e940b245992b6fecf1c3e83dd18eb3dcf30cccea",
-      "path": "assets/memories/gallery-shared-06.jpg",
-      "bytes": 84011
+      "sha256": "d18ae06836963d9362081184519994b8db56b577ea9b05bad55d82ff12578c14",
+      "path": "assets/memories/replacement-narnory-memories-photos-5.jpg",
+      "bytes": 133287
     },
     {
       "id": "narNoryGallery.photos:0",
       "source": "narNoryGallery.photos",
-      "path": "assets/memories/gallery-indexeddb-01.jpg",
+      "path": "assets/memories/replacement-narNoryGallery-photos-0.jpg",
       "mimeType": "image/jpeg",
-      "bytes": 169430,
-      "sha256": "ee7513d1384c560de44242e96ca54bd02ae2c4148e6778d45a248e19f0c5b48f"
+      "bytes": 87571,
+      "sha256": "c4e308a715054fa28e4612f56b1c33f808fc8ac9f5fab65b15ac84d5a8a5f79f"
     }
   ],
   "cards": {
