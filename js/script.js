@@ -1,6 +1,15 @@
 ﻿// NarNory - Romantic Scrapbook JavaScript (updated)
 const DEFAULT_START_DATE = '2025-01-01';
 const DEFAULT_SURPRISE_MESSAGE = 'أنا بحبك أوي أوي ❤️💕 وكل يوم بحبك أكتر، وإنتِ أجمل حاجة حصلتلي في حياتي ❤️❤️';
+const sharedMemoriesReady = fetch('assets/memories.json')
+    .then(response => {
+        if (!response.ok) throw new Error(`Could not load shared memories (${response.status}).`);
+        return response.json();
+    })
+    .catch(error => {
+        console.error('Shared memories could not be loaded.', error);
+        return null;
+    });
 
 // Navigation
 const navToggle = document.getElementById('navToggle');
@@ -84,13 +93,15 @@ function calculateDays() {
     if (yearsEl) yearsEl.textContent = Math.floor(elapsedMonths / 12);
 }
 
-function initCounter() {
+function initCounter(sharedMemories) {
     const savedStartDate = localStorage.getItem('narNory_startDate');
     if (startDateInput) {
         if (savedStartDate !== null) {
             startDateInput.value = savedStartDate;
         } else {
-            startDateInput.value = DEFAULT_START_DATE;
+            startDateInput.value = sharedMemories && sharedMemories.startDate
+                ? sharedMemories.startDate
+                : DEFAULT_START_DATE;
         }
         startDateInput.addEventListener('input', () => {
             localStorage.setItem('narNory_startDate', startDateInput.value);
@@ -122,10 +133,17 @@ const keepGalleryPhoto = document.getElementById('keepGalleryPhoto');
 const changeGalleryPhoto = document.getElementById('changeGalleryPhoto');
 let galleryPhotoDatabase;
 let activeGalleryPhoto = null;
+let pendingGalleryPhoto = null;
 const galleryPhotoUrls = new Set();
 
 function setPhotoUploadStatus(message) {
     if (photoUploadStatus) photoUploadStatus.textContent = message;
+}
+
+async function getPhotoHash(blob) {
+    if (!window.crypto || !window.crypto.subtle) return null;
+    const digest = await window.crypto.subtle.digest('SHA-256', await blob.arrayBuffer());
+    return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
 function openGalleryPhotoDatabase() {
@@ -150,7 +168,7 @@ function openGalleryPhotoDatabase() {
     return galleryPhotoDatabase;
 }
 
-function appendGalleryPhoto(file, photoId) {
+function appendGalleryPhoto(file, photoId, captionText) {
     if (!galleryGrid) return;
     const card = document.createElement('div');
     card.className = 'photo-card';
@@ -171,30 +189,164 @@ function appendGalleryPhoto(file, photoId) {
     const caption = document.createElement('div');
     caption.className = 'editable-caption';
     caption.contentEditable = 'true';
-    caption.textContent = file.name.replace(/\.[^.]+$/, '');
+    caption.textContent = captionText || file.name.replace(/\.[^.]+$/, '');
     captionWrap.appendChild(caption);
     polaroid.append(image, captionWrap);
     card.appendChild(polaroid);
     galleryGrid.appendChild(card);
 }
 
-async function loadAddedGalleryPhotos() {
+function appendSharedGalleryPhoto(photo) {
     if (!galleryGrid) return;
+    const src = photo.path || photo.src;
+    const card = document.createElement('div');
+    card.className = 'photo-card';
+    const polaroid = document.createElement('div');
+    polaroid.className = 'polaroid';
+    const image = document.createElement('div');
+    image.className = 'polaroid-image';
+    image.style.backgroundImage = `url("${src}")`;
+    image.dataset.galleryPhoto = 'true';
+    image.dataset.sourceId = photo.id;
+    image.setAttribute('role', 'img');
+    image.setAttribute('aria-label', photo.caption || 'Shared memory photo');
+    const captionWrap = document.createElement('div');
+    captionWrap.className = 'polaroid-caption';
+    const caption = document.createElement('div');
+    caption.className = 'editable-caption';
+    caption.contentEditable = 'true';
+    let savedCaptions = {};
+    try {
+        savedCaptions = JSON.parse(localStorage.getItem('narNory_sharedCaptions') || '{}');
+    } catch (error) {
+        setPhotoUploadStatus(`Saved captions could not be read: ${error.message}`);
+    }
+    caption.textContent = Object.prototype.hasOwnProperty.call(savedCaptions, photo.id)
+        ? savedCaptions[photo.id]
+        : (photo.caption || '');
+    caption.addEventListener('blur', () => {
+        try {
+            const latestCaptions = JSON.parse(localStorage.getItem('narNory_sharedCaptions') || '{}');
+            latestCaptions[photo.id] = caption.textContent;
+            localStorage.setItem('narNory_sharedCaptions', JSON.stringify(latestCaptions));
+        } catch (error) {
+            setPhotoUploadStatus(`Caption could not be saved: ${error.message}`);
+        }
+    });
+    captionWrap.appendChild(caption);
+    polaroid.append(image, captionWrap);
+    card.appendChild(polaroid);
+    galleryGrid.appendChild(card);
+    return image;
+}
+
+async function getSharedPhotoReplacement(sourceId) {
     const database = await openGalleryPhotoDatabase();
     const transaction = database.transaction('photos', 'readonly');
-    const request = transaction.objectStore('photos').openCursor();
-    await new Promise((resolve, reject) => {
-        request.onsuccess = () => {
-            const cursor = request.result;
-            if (!cursor) {
-                resolve();
-                return;
-            }
-            appendGalleryPhoto(cursor.value, cursor.key);
-            cursor.continue();
-        };
-        request.onerror = () => reject(request.error || new Error('Could not load saved photos.'));
+    const request = transaction.objectStore('photos').get(`replacement:${sourceId}`);
+    return new Promise((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result || null);
+        request.onerror = () => reject(request.error || new Error('Could not load a saved photo replacement.'));
     });
+}
+
+async function saveSharedPhotoReplacement(sourceId, file) {
+    const database = await openGalleryPhotoDatabase();
+    const transaction = database.transaction('photos', 'readwrite');
+    transaction.objectStore('photos').put(file, `replacement:${sourceId}`);
+    return new Promise((resolve, reject) => {
+        transaction.oncomplete = resolve;
+        transaction.onerror = () => reject(transaction.error || new Error('Could not save the replacement photo.'));
+        transaction.onabort = () => reject(transaction.error || new Error('Replacing the photo was cancelled.'));
+    });
+}
+
+async function loadAddedGalleryPhotos(sharedMemories) {
+    if (!galleryGrid) return;
+    const seenHashes = new Set();
+    const localPhotos = [];
+    try {
+        const savedPhotos = JSON.parse(localStorage.getItem('narNory_photos') || '[]');
+        if (Array.isArray(savedPhotos)) {
+            savedPhotos.forEach((photo, index) => {
+                if (photo && typeof photo.src === 'string') {
+                    localPhotos.push({
+                        id: `narNory_photos:${index}`,
+                        src: photo.src,
+                        caption: typeof photo.caption === 'string' ? photo.caption : ''
+                    });
+                }
+            });
+        }
+    } catch (error) {
+        setPhotoUploadStatus(`Saved browser photos could not be read: ${error.message}`);
+    }
+
+    const addSharedIfUnique = async photo => {
+        if (photo.duplicateOf) return;
+        let hash = photo.sha256 || null;
+        if (!hash && photo.src && photo.src.startsWith('data:')) {
+            try {
+                hash = await getPhotoHash(await (await fetch(photo.src)).blob());
+            } catch (error) {
+                console.warn(`Could not fingerprint saved photo ${photo.id}.`, error);
+            }
+        }
+        if (hash && seenHashes.has(hash)) return;
+        if (hash) seenHashes.add(hash);
+        const image = appendSharedGalleryPhoto(photo);
+        try {
+            const replacement = await getSharedPhotoReplacement(photo.id);
+            if (replacement) {
+                const objectUrl = URL.createObjectURL(replacement);
+                galleryPhotoUrls.add(objectUrl);
+                image.style.backgroundImage = `url("${objectUrl}")`;
+                image.dataset.objectUrl = objectUrl;
+                image.setAttribute('aria-label', photo.caption || 'Shared memory photo');
+            }
+        } catch (error) {
+            setPhotoUploadStatus(`${error.message} The shared original photo remains available.`);
+        }
+    };
+
+    for (const photo of localPhotos) await addSharedIfUnique(photo);
+
+    let database;
+    try {
+        database = await openGalleryPhotoDatabase();
+        const transaction = database.transaction('photos', 'readonly');
+        const request = transaction.objectStore('photos').openCursor();
+        const records = await new Promise((resolve, reject) => {
+            const saved = [];
+            request.onsuccess = () => {
+                const cursor = request.result;
+                if (!cursor) {
+                    resolve(saved);
+                    return;
+                }
+                if (typeof cursor.key === 'number') {
+                    saved.push({ file: cursor.value, key: cursor.key });
+                }
+                cursor.continue();
+            };
+            request.onerror = () => reject(request.error || new Error('Could not load saved photos.'));
+        });
+        for (const record of records) {
+            const hash = await getPhotoHash(record.file).catch(error => {
+                console.warn('Could not fingerprint a saved gallery photo.', error);
+                return null;
+            });
+            if (hash && seenHashes.has(hash)) continue;
+            if (hash) seenHashes.add(hash);
+            appendGalleryPhoto(record.file, record.key);
+        }
+    } catch (error) {
+        setPhotoUploadStatus(`${error.message} Shared photos remain available.`);
+    }
+
+    for (const photo of sharedMemories && Array.isArray(sharedMemories.gallery) ? sharedMemories.gallery : []) {
+        await addSharedIfUnique(photo);
+    }
 }
 
 async function saveAddedGalleryPhotos(files) {
@@ -238,12 +390,15 @@ function openPhotoLightbox(image) {
     activeGalleryPhoto = {
         image,
         photoId: image.dataset.photoId || null,
+        sourceId: image.dataset.sourceId || null,
         cardKey: image.getAttribute('data-card')
     };
     photoLightboxImage.src = imageUrl;
     photoLightbox.hidden = false;
     photoLightboxStatus.textContent = '';
-    changeGalleryPhoto.hidden = !activeGalleryPhoto.photoId && !activeGalleryPhoto.cardKey;
+    changeGalleryPhoto.hidden = !activeGalleryPhoto.photoId
+        && !activeGalleryPhoto.sourceId
+        && !activeGalleryPhoto.cardKey;
     photoLightboxClose.focus();
 }
 
@@ -271,6 +426,12 @@ if (photoLightbox) {
     changeGalleryPhoto.addEventListener('click', () => {
         if (!activeGalleryPhoto) return;
         if (activeGalleryPhoto.photoId && replaceGalleryPhotoInput) {
+            pendingGalleryPhoto = activeGalleryPhoto;
+            replaceGalleryPhotoInput.click();
+            return;
+        }
+        if (activeGalleryPhoto.sourceId && replaceGalleryPhotoInput) {
+            pendingGalleryPhoto = activeGalleryPhoto;
             replaceGalleryPhotoInput.click();
             return;
         }
@@ -290,6 +451,8 @@ if (photoLightbox) {
 if (replaceGalleryPhotoInput) {
     replaceGalleryPhotoInput.addEventListener('change', async () => {
         const file = replaceGalleryPhotoInput.files && replaceGalleryPhotoInput.files[0];
+        const current = pendingGalleryPhoto;
+        pendingGalleryPhoto = null;
         replaceGalleryPhotoInput.value = '';
         if (!file) {
             if (photoLightboxStatus) photoLightboxStatus.textContent = 'Original photo kept; no replacement selected.';
@@ -299,33 +462,49 @@ if (replaceGalleryPhotoInput) {
             if (photoLightboxStatus) photoLightboxStatus.textContent = 'Please choose a valid image. The original photo is unchanged.';
             return;
         }
-        if (!activeGalleryPhoto || !activeGalleryPhoto.photoId) return;
+        if (!current || (!current.photoId && !current.sourceId)) return;
 
-        const current = activeGalleryPhoto;
         const newUrl = URL.createObjectURL(file);
         try {
-            await replaceSavedGalleryPhoto(current.photoId, file);
+            if (current.photoId) {
+                await replaceSavedGalleryPhoto(current.photoId, file);
+            } else {
+                await saveSharedPhotoReplacement(current.sourceId, file);
+            }
             const oldUrl = current.image.dataset.objectUrl;
             current.image.style.backgroundImage = `url("${newUrl}")`;
             current.image.dataset.objectUrl = newUrl;
             current.image.setAttribute('aria-label', file.name);
-            photoLightboxImage.src = newUrl;
+            if (activeGalleryPhoto === current) photoLightboxImage.src = newUrl;
             galleryPhotoUrls.add(newUrl);
             if (oldUrl && galleryPhotoUrls.has(oldUrl)) {
                 URL.revokeObjectURL(oldUrl);
                 galleryPhotoUrls.delete(oldUrl);
             }
-            if (photoLightboxStatus) photoLightboxStatus.textContent = 'Photo replaced and saved on this device.';
+            if (photoLightboxStatus && activeGalleryPhoto === current) {
+                photoLightboxStatus.textContent = 'Photo replaced and saved on this device.';
+            }
         } catch (error) {
             URL.revokeObjectURL(newUrl);
-            if (photoLightboxStatus) photoLightboxStatus.textContent = `${error.message} The original photo is unchanged.`;
+            if (photoLightboxStatus && activeGalleryPhoto === current) {
+                photoLightboxStatus.textContent = `${error.message} The original photo is unchanged.`;
+            }
         }
+    });
+    replaceGalleryPhotoInput.addEventListener('cancel', () => {
+        pendingGalleryPhoto = null;
+        if (photoLightboxStatus) photoLightboxStatus.textContent = 'Original photo kept; no replacement selected.';
     });
 }
 
-const galleryPhotosReady = loadAddedGalleryPhotos().catch(error => {
-    setPhotoUploadStatus(`${error.message} Photos can still be added until you leave this page.`);
-});
+const galleryPhotosReady = sharedMemoriesReady
+    .then(async sharedMemories => {
+        loadSavedCardPhotos(sharedMemories);
+        await loadAddedGalleryPhotos(sharedMemories);
+    })
+    .catch(error => {
+        setPhotoUploadStatus(`${error.message} Photos can still be added until you leave this page.`);
+    });
 
 if (addPhotosBtn && photoInput) {
     addPhotosBtn.addEventListener('click', () => photoInput.click());
@@ -367,8 +546,11 @@ function setCardImage(cardKey, imageSrc) {
     }
 }
 
-function loadSavedCardPhotos() {
+function loadSavedCardPhotos(sharedMemories) {
     const saved = JSON.parse(localStorage.getItem('narNory_cardPhotos') || '{}');
+    Object.entries(sharedMemories && sharedMemories.cards || {}).forEach(([key, photo]) => {
+        if (!saved[key]) setCardImage(key, photo.path);
+    });
     if (saved['first-memory']) setCardImage('first-memory', saved['first-memory']);
     if (saved['sweet-moments']) setCardImage('sweet-moments', saved['sweet-moments']);
     if (saved['forever-together']) setCardImage('forever-together', saved['forever-together']);
@@ -410,7 +592,6 @@ function attachPerCardInput(inputEl, cardKey) {
 attachPerCardInput(photoInputFirst, 'first-memory');
 attachPerCardInput(photoInputSweet, 'sweet-moments');
 attachPerCardInput(photoInputForever, 'forever-together');
-if (galleryGrid) loadSavedCardPhotos();
 window.addEventListener('beforeunload', () => {
     galleryPhotoUrls.forEach(objectUrl => URL.revokeObjectURL(objectUrl));
 });
@@ -470,24 +651,39 @@ function saveTimeline() {
     });
     localStorage.setItem('narNory_timeline', JSON.stringify(timelineData));
 }
-function loadTimeline() {
+function loadTimeline(sharedMemories) {
     if (!timelineContainer) return;
     const savedTimeline = JSON.parse(localStorage.getItem('narNory_timeline') || '[]');
-    if (savedTimeline.length === 0) {
+    if (savedTimeline.length > 0) {
+        timelineContainer.innerHTML = '';
+        savedTimeline.forEach(itemData => {
+            const newItem = createTimelineItem(itemData.title, itemData.date, itemData.description);
+            timelineContainer.appendChild(newItem);
+        });
+        return;
+    }
+    const sharedTimeline = sharedMemories && Array.isArray(sharedMemories.timeline)
+        ? sharedMemories.timeline.filter(item => !item.duplicateOf)
+        : [];
+    if (sharedTimeline.length > 0) {
+        timelineContainer.innerHTML = '';
+        sharedTimeline.forEach(itemData => {
+            const newItem = createTimelineItem(itemData.title, itemData.date, itemData.description);
+            timelineContainer.appendChild(newItem);
+        });
+    } else {
         timelineContainer.querySelectorAll('.timeline-item').forEach(item => {
             item.querySelector('.timeline-title').addEventListener('blur', saveTimeline);
             item.querySelector('.timeline-date').addEventListener('blur', saveTimeline);
             item.querySelector('.timeline-description').addEventListener('blur', saveTimeline);
         });
-        return;
     }
-    timelineContainer.innerHTML = '';
-    savedTimeline.forEach(itemData => {
-        const newItem = createTimelineItem(itemData.title, itemData.date, itemData.description);
-        timelineContainer.appendChild(newItem);
+}
+if (timelineContainer) {
+    sharedMemoriesReady.then(loadTimeline).catch(error => {
+        console.error('Timeline memories could not be loaded.', error);
     });
 }
-if (timelineContainer) loadTimeline();
 
 // Love letter
 const loveLetterEl = document.getElementById('loveLetter');
@@ -503,6 +699,21 @@ if (loveLetterEl) {
         localStorage.setItem('narNory_loveLetter', loveLetterEl.textContent);
     });
 }
+
+const heroTitleEl = document.getElementById('heroTitle');
+const heroSubtitleEl = document.getElementById('heroSubtitle');
+const songSubtitleEl = document.getElementById('songSubtitle');
+sharedMemoriesReady.then(sharedMemories => {
+    if (!sharedMemories || !sharedMemories.text) return;
+    const text = sharedMemories.text;
+    if (heroTitleEl && text.heroTitle) heroTitleEl.textContent = text.heroTitle;
+    if (heroSubtitleEl && text.heroSubtitle) heroSubtitleEl.textContent = text.heroSubtitle;
+    if (songSubtitleEl && text.songSub) songSubtitleEl.textContent = text.songSub;
+    if (loveLetterEl && localStorage.getItem('narNory_loveLetter') === null && text.letter) {
+        loveLetterEl.textContent = text.letter;
+    }
+    if (surpriseMessageEl && text.surprise) surpriseMessageEl.textContent = text.surprise;
+});
 
 // Music
 const musicInput = document.getElementById('musicInput');
@@ -561,8 +772,13 @@ function updateMusicCover(file) {
 function setMusicSource(file) {
     const previousAudioUrl = musicAudioUrl;
     audioPlayer.pause();
-    musicAudioUrl = URL.createObjectURL(file);
-    audioPlayer.src = musicAudioUrl;
+    if (typeof file === 'string') {
+        musicAudioUrl = null;
+        audioPlayer.src = file;
+    } else {
+        musicAudioUrl = URL.createObjectURL(file);
+        audioPlayer.src = musicAudioUrl;
+    }
     audioPlayer.style.display = 'inline-block';
     if (previousAudioUrl) URL.revokeObjectURL(previousAudioUrl);
 }
@@ -589,12 +805,43 @@ async function loadMusicSelection() {
 }
 
 if (musicInput && audioPlayer && selectedMusicEl) {
-    const musicReady = loadMusicSelection().then(saved => {
-        if (!saved || !saved.song) return;
-        selectedMusicEl.textContent = saved.name || saved.song.name;
-        setMusicSource(saved.song);
-        updateMusicCover(saved.cover);
-    }).catch(error => setMusicStatus(`${error.message} Select the song again to use it.`));
+    const musicReady = Promise.all([
+        loadMusicSelection().catch(error => {
+            setMusicStatus(`${error.message} Shared music will be used if available.`);
+            return null;
+        }),
+        sharedMemoriesReady
+    ]).then(async ([saved, sharedMemories]) => {
+        if (saved && saved.song) {
+            selectedMusicEl.textContent = saved.name || saved.song.name;
+            setMusicSource(saved.song);
+            updateMusicCover(saved.cover);
+            return;
+        }
+        if (!sharedMemories || !sharedMemories.music || !sharedMemories.music.song) return;
+
+        const songPath = sharedMemories.music.song.path;
+        const coverPath = sharedMemories.music.cover && sharedMemories.music.cover.path;
+        selectedMusicEl.textContent = sharedMemories.text && sharedMemories.text.songTitle
+            ? sharedMemories.text.songTitle
+            : 'Our song';
+        setMusicSource(songPath);
+        if (coverPath && musicCoverEl && musicIconEl) {
+            if (musicCoverUrl) URL.revokeObjectURL(musicCoverUrl);
+            musicCoverUrl = null;
+            currentMusicCover = null;
+            musicCoverEl.src = coverPath;
+            musicCoverEl.hidden = false;
+            musicIconEl.hidden = true;
+            try {
+                const response = await fetch(coverPath);
+                if (!response.ok) throw new Error(`Could not load cover image (${response.status}).`);
+                currentMusicCover = await response.blob();
+            } catch (error) {
+                setMusicStatus(`${error.message} The cover will not be included if you replace the song.`);
+            }
+        }
+    }).catch(error => setMusicStatus(`${error.message} Select a song to use the player.`));
 
     musicInput.addEventListener('change', async () => {
         const file = musicInput.files && musicInput.files[0];
@@ -706,6 +953,6 @@ document.querySelectorAll('.photo-card, .timeline-item, .counter-card, .letter-c
 
 // Init
 document.addEventListener('DOMContentLoaded', () => {
-    initCounter();
+    sharedMemoriesReady.then(initCounter);
     console.log('NarNory Scrapbook initialized! ❤️');
 });

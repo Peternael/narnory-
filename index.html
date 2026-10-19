@@ -48,8 +48,8 @@
     <!-- HERO SECTION -->
     <section id="home" class="hero">
         <div class="hero-content">
-            <h1 class="hero-title">NarNory</h1>
-            <p class="hero-subtitle">Our Story in a Scrapbook</p>
+            <h1 class="hero-title" id="heroTitle">NarNory</h1>
+            <p class="hero-subtitle" id="heroSubtitle">Our Story in a Scrapbook</p>
             <p class="hero-text">A collection of our sweetest moments, captured forever in time</p>
             <div class="heart-animation">
                 <span class="heart">❤️</span>
@@ -211,14 +211,14 @@ Me</div>
     <section id="music" class="section">
         <div class="container">
             <h2 class="section-title">Our Song</h2>
-            <p class="section-subtitle">The melody of our hearts</p>
+            <p class="section-subtitle" id="songSubtitle">The melody of our hearts</p>
             
             <div class="music-card">
                 <div class="music-artwork" id="musicArtwork">
                     <span class="music-icon" id="musicIcon" aria-hidden="true">🎵</span>
                     <img id="musicCover" alt="Selected song cover" hidden>
                 </div>
-                <p class="music-instruction">Choose a song and an optional cover for your special soundtrack</p>
+                <p class="music-instruction" id="songInstruction">Choose a song and an optional cover for your special soundtrack</p>
                 <input type="file" id="musicInput" accept="audio/*" aria-label="Select music file">
                 <input type="file" id="musicCoverInput" accept="image/*" aria-label="Select music cover image">
                 <label for="musicInput" class="btn-music">Choose Music</label>
@@ -261,4 +261,3 @@ Me</div>
     <script src="js/script.js"></script>
 </body>
 </html>
-

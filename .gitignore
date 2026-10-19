@@ -11,3 +11,6 @@
 !assets/images/placeholder1.svg
 !assets/images/placeholder2.svg
 !assets/images/placeholder3.svg
+!assets/memories.json
+!assets/memories/
+!assets/memories/**

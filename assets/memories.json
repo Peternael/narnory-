@@ -1,0 +1,208 @@
+{
+  "version": 1,
+  "startDate": "2025-04-20",
+  "gallery": [
+    {
+      "id": "narNory_photos:0",
+      "source": "narNory_photos",
+      "caption": "Our Special Moment",
+      "path": "assets/memories/gallery-local-01.jpg",
+      "mimeType": "image/jpeg",
+      "bytes": 94271,
+      "sha256": "c2a9e52ba15fe82e16bb3174f283d0e489fbbd496259c89c1bd7223f53dc5834"
+    },
+    {
+      "id": "narNory_photos:1",
+      "source": "narNory_photos",
+      "caption": "Our Special Moment",
+      "path": "assets/memories/gallery-local-02.jpg",
+      "mimeType": "image/jpeg",
+      "bytes": 86766,
+      "sha256": "5bb382106ba1fa5e907c07a867d97f8d53032badd83c1ade282f1d6b79e49042"
+    },
+    {
+      "id": "narnory-memories.photos:0",
+      "source": "narnory-memories.photos",
+      "caption": "Sunset together ♡",
+      "mimeType": "image/jpeg",
+      "sha256": "3955bb116892828d0de05c8980666a422495358e20d94e4204488c90eaf06072",
+      "path": "assets/memories/gallery-shared-01.jpg",
+      "bytes": 73728
+    },
+    {
+      "id": "narnory-memories.photos:1",
+      "source": "narnory-memories.photos",
+      "caption": "My happiness ♥",
+      "mimeType": "image/jpeg",
+      "sha256": "857c228a12aa75439ac7c3c1ca139b4dd7830b4d4c3b60996d88cc295fd61e56",
+      "path": "assets/memories/gallery-shared-02.jpg",
+      "bytes": 99470
+    },
+    {
+      "id": "narnory-memories.photos:2",
+      "source": "narnory-memories.photos",
+      "caption": "Good vibes ♡",
+      "mimeType": "image/jpeg",
+      "sha256": "521a7098a01e669746715cf160dbf8cbb5d7fc4aa24deb2c1e08a021de881fcb",
+      "path": "assets/memories/gallery-shared-03.jpg",
+      "bytes": 72470
+    },
+    {
+      "id": "narnory-memories.photos:3",
+      "source": "narnory-memories.photos",
+      "caption": "Always us ♥",
+      "mimeType": "image/jpeg",
+      "sha256": "3700138c883074b6bebc916811709fcd58ec16d763be8c0512efc33252193ced",
+      "path": "assets/memories/gallery-shared-04.jpg",
+      "bytes": 77672
+    },
+    {
+      "id": "narnory-memories.photos:4",
+      "source": "narnory-memories.photos",
+      "caption": "Better together ♡",
+      "mimeType": "image/jpeg",
+      "sha256": "c8c33f4703ebfc6b8236b1c3389e60c38afc09b710ee19d69a25e39f4c795880",
+      "path": "assets/memories/gallery-shared-05.jpg",
+      "bytes": 50692
+    },
+    {
+      "id": "narnory-memories.photos:5",
+      "source": "narnory-memories.photos",
+      "caption": "Next adventure ♥",
+      "mimeType": "image/jpeg",
+      "sha256": "c5c87769570ef93e003a4444e940b245992b6fecf1c3e83dd18eb3dcf30cccea",
+      "path": "assets/memories/gallery-shared-06.jpg",
+      "bytes": 84011
+    },
+    {
+      "id": "narNoryGallery.photos:0",
+      "source": "narNoryGallery.photos",
+      "path": "assets/memories/gallery-indexeddb-01.jpg",
+      "mimeType": "image/jpeg",
+      "bytes": 169430,
+      "sha256": "ee7513d1384c560de44242e96ca54bd02ae2c4148e6778d45a248e19f0c5b48f"
+    }
+  ],
+  "cards": {
+    "first-memory": {
+      "id": "narNory_cardPhotos:first-memory",
+      "source": "narNory_cardPhotos",
+      "path": "assets/memories/card-first-memory.jpg",
+      "mimeType": "image/jpeg",
+      "bytes": 112234,
+      "sha256": "5dfa682d90abad5ebf8af552d069413669ea0865a2923e1644dbcb0af951097b"
+    },
+    "sweet-moments": {
+      "id": "narNory_cardPhotos:sweet-moments",
+      "source": "narNory_cardPhotos",
+      "path": "assets/memories/card-sweet-moments.jpg",
+      "mimeType": "image/jpeg",
+      "bytes": 112723,
+      "sha256": "4eba87c031d7c379493da1bba977596a02ca0ae000538be9a09f8d5c53389016"
+    },
+    "forever-together": {
+      "id": "narNory_cardPhotos:forever-together",
+      "source": "narNory_cardPhotos",
+      "path": "assets/memories/card-forever-together.jpg",
+      "mimeType": "image/jpeg",
+      "bytes": 109134,
+      "sha256": "0a8eb9e3e3c9d8c763cccfdffa59099bffef9eb1fdbc7d2088f6c44632231540"
+    }
+  },
+  "timeline": [
+    {
+      "id": "narNory_timeline:0",
+      "source": "narNory_timeline",
+      "title": "First Meeting",
+      "date": "2025-12",
+      "description": "The day our story began"
+    },
+    {
+      "id": "narNory_timeline:1",
+      "source": "narNory_timeline",
+      "title": "First Date",
+      "date": "23-10-2025",
+      "description": "A day full of butterflies and smiles"
+    },
+    {
+      "id": "narNory_timeline:2",
+      "source": "narNory_timeline",
+      "title": "First  love ",
+      "date": "20/4/2025",
+      "description": "انا بحبك اوي  اوي  "
+    },
+    {
+      "id": "narNory_timeline:3",
+      "source": "narNory_timeline",
+      "title": "Complete one year and half",
+      "date": "2026-10-20",
+      "description": "I love You So much  NarNory"
+    },
+    {
+      "id": "narnory-memories.events:0",
+      "source": "narnory-memories.events",
+      "title": "Our first meeting",
+      "date": "Add your date",
+      "description": "A random day… that changed everything."
+    },
+    {
+      "id": "narnory-memories.events:1",
+      "source": "narnory-memories.events",
+      "title": "Our first chat",
+      "date": "Add your date",
+      "description": "That message, and the world felt brighter."
+    },
+    {
+      "id": "narnory-memories.events:2",
+      "source": "narnory-memories.events",
+      "title": "Officially together",
+      "date": "Add your date",
+      "description": "The best decision I ever made."
+    },
+    {
+      "id": "narnory-memories.events:3",
+      "source": "narnory-memories.events",
+      "title": "Our first trip",
+      "date": "Add your date",
+      "description": "New places, same feelings."
+    },
+    {
+      "id": "narnory-memories.events:4",
+      "source": "narnory-memories.events",
+      "title": "And still…",
+      "date": "Today",
+      "description": "More memories, more dreams, more us."
+    }
+  ],
+  "text": {
+    "letter": "My NarNory,\n\nYou make ordinary days feel special, and little moments become my favorite memories. If I could choose a thousand times, I would still choose you.\n\nThank you for being you, for the laughs, the talks, and all the little things that mean everything to me.\n\nI love you, today, tomorrow, and always. ♥",
+    "heroTitle": "NarNory ♡",
+    "heroSubtitle": "My favorite person in every version of life.",
+    "songTitle": "Our special song",
+    "songSub": "The song that reminds me of you",
+    "surprise": "If I had one wish, it would be to collect a million more little moments with you. You are my favorite hello, my hardest goodbye, and my sweetest thought. ♡",
+    "source": "narnory-memories"
+  },
+  "music": {
+    "song": {
+      "path": "assets/memories/selected-song.mp3",
+      "mimeType": "audio/mpeg",
+      "bytes": 16097009,
+      "sha256": "54506d5cd2c9bd771624e0d4fd50f4268db83bf8c6586948a13695f86ddd31f0",
+      "source": "narNoryMusic.selection:0.song"
+    },
+    "cover": {
+      "path": "assets/memories/selected-song-cover.png",
+      "mimeType": "image/png",
+      "bytes": 2642221,
+      "sha256": "ea722ae1c9df1179d61a65b4c3b336ff9e63652b838f2baabae6b4145fc2acb2",
+      "source": "narNoryMusic.selection:0.cover"
+    },
+    "selectionSource": "narNoryMusic.selection:0"
+  },
+  "startDateSource": "narNory_startDate",
+  "deduplication": {
+    "photos": "Exact SHA-256 match of media bytes; all source records retained with duplicateOf when applicable.",
+    "timeline": "Exact match after Unicode normalization, whitespace folding, and case normalization across title, date, and description."
+  }
+}
