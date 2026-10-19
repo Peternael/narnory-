@@ -1,0 +1,264 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NarNory - Our Romantic Scrapbook</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- NAVIGATION -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">NarNory</div>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#counter" class="nav-link">Our Days</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#gallery" class="nav-link">Gallery</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#timeline" class="nav-link">Timeline</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#letter" class="nav-link">Love Letter</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#music" class="nav-link">Our Song</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#surprise" class="nav-link">Surprise</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">NarNory</h1>
+            <p class="hero-subtitle">Our Story in a Scrapbook</p>
+            <p class="hero-text">A collection of our sweetest moments, captured forever in time</p>
+            <div class="heart-animation">
+                <span class="heart">❤️</span>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>Scroll Down</span>
+            <div class="scroll-arrow">↓</div>
+        </div>
+    </section>
+
+    <!-- RELATIONSHIP DAY COUNTER -->
+    <section id="counter" class="section">
+        <div class="container">
+            <h2 class="section-title">Our Journey Together</h2>
+            <p class="section-subtitle">Counting every beautiful day</p>
+            
+            <div class="counter-card">
+                <label for="startDate" class="start-date-label">Start Date (customize in the box below):</label>
+                <input type="date" id="startDate" class="start-date-input" aria-label="Start date of relationship">
+                
+                <div class="counter-display">
+                    <div class="counter-item">
+                        <span class="counter-number" id="days">0</span>
+                        <span class="counter-label">Days</span>
+                    </div>
+                    <div class="counter-item">
+                        <span class="counter-number" id="months">0</span>
+                        <span class="counter-label">Months</span>
+                    </div>
+                    <div class="counter-item">
+                        <span class="counter-number" id="years">0</span>
+                        <span class="counter-label">Years</span>
+                    </div>
+                </div>
+                <p class="counter-message">Every day with you is a gift</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PHOTO GALLERY -->
+    <section id="gallery" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Our Photo Gallery</h2>
+            <p class="section-subtitle">Click to add your own photos • Captions are editable</p>
+            
+            <div class="gallery-controls">
+                <input type="file" id="photoInput" accept="image/*" multiple aria-label="Select photos">
+            <input type="file" id="photoInputFirst" accept="image/*" style="display:none" data-target="first-memory">
+            <input type="file" id="photoInputSweet" accept="image/*" style="display:none" data-target="sweet-moments">
+            <input type="file" id="photoInputForever" accept="image/*" style="display:none" data-target="forever-together">
+            <input type="file" id="replaceGalleryPhotoInput" accept="image/*" style="display:none" aria-label="Choose a replacement photo">
+
+                <button type="button" id="addPhotosBtn" class="btn-add-photo">+ Add Photos</button>
+                <p class="help-text">Tip: You can also replace the placeholder images in assets/images/ with your own photos. See README.md for details.</p>
+                <p id="photoUploadStatus" class="help-text" role="status" aria-live="polite"></p>
+            </div>
+            
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Photos will be dynamically added here -->
+                <div class="photo-card placeholder">
+                    <div class="polaroid">
+                        <div class="polaroid-image" style="background-image: url('assets/images/placeholder1.svg');" data-placeholder="true" data-card="first-memory"></div>
+                        <div class="polaroid-caption">
+                            <div contenteditable="true" class="editable-caption" data-default="Our First Memory">Our First Memory</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="photo-card placeholder">
+                    <div class="polaroid">
+                        <div class="polaroid-image" style="background-image: url('assets/images/placeholder2.svg');" data-placeholder="true" data-card="sweet-moments"></div>
+                        <div class="polaroid-caption">
+                            <div contenteditable="true" class="editable-caption" data-default="Sweet Moments">Sweet Moments</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="photo-card placeholder">
+                    <div class="polaroid">
+                        <div class="polaroid-image" style="background-image: url('assets/images/placeholder3.svg');" data-placeholder="true" data-card="forever-together"></div>
+                        <div class="polaroid-caption">
+                            <div contenteditable="true" class="editable-caption" data-default="Forever Together">Forever Together</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="photo-lightbox" id="photoLightbox" hidden>
+        <div class="photo-lightbox-panel" role="dialog" aria-modal="true" aria-label="View photo">
+            <button type="button" class="photo-lightbox-close" id="photoLightboxClose" aria-label="Close photo viewer">&times;</button>
+            <img class="photo-lightbox-image" id="photoLightboxImage" alt="Selected gallery photo">
+            <div class="photo-lightbox-actions">
+                <button type="button" class="btn-add" id="keepGalleryPhoto">Keep Photo</button>
+                <button type="button" class="btn-add" id="changeGalleryPhoto">Change Photo</button>
+            </div>
+            <p class="help-text photo-lightbox-status" id="photoLightboxStatus" role="status" aria-live="polite"></p>
+        </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <section id="timeline" class="section">
+        <div class="container">
+            <h2 class="section-title">Our Timeline</h2>
+            <p class="section-subtitle">The milestones that made us us</p>
+            
+            <button type="button" id="addTimelineBtn" class="btn-add">Add Memory</button>
+            
+            <div class="timeline" id="timelineContainer">
+                <!-- Timeline items will be added here -->
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div contenteditable="true" class="timeline-title" data-default="First Meeting">First Meeting</div>
+                        <div contenteditable="true" class="timeline-date" data-default="2025-01-01">2025-01-01</div>
+                        <div contenteditable="true" class="timeline-description" data-default="The day our story began">The day our story began</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div contenteditable="true" class="timeline-title" data-default="First Date">First Date</div>
+                        <div contenteditable="true" class="timeline-date" data-default="2025-02-14">2025-02-14</div>
+                        <div contenteditable="true" class="timeline-description" data-default="A day full of butterflies and smiles">A day full of butterflies and smiles</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LOVE LETTER -->
+    <section id="letter" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Our Love Letter</h2>
+            <p class="section-subtitle">Words straight from the heart</p>
+            
+            <div class="letter-card">
+                <div contenteditable="true" id="loveLetter" class="love-letter-text" data-default="Dear NarNory,
+
+Every moment spent with you is a treasure I hold close to my heart. Your smile lights up my world and your kindness makes me a better person. Thank you for the laughter, the adventures, and the love we share.
+
+I look forward to making countless more memories with you. You are my everything, and I love you more with each passing day.
+
+Yours always,
+Me">Dear NarNory,
+
+Every moment spent with you is a treasure I hold close to my heart. Your smile lights up my world and your kindness makes me a better person. Thank you for the laughter, the adventures, and the love we share.
+
+I look forward to making countless more memories with you. You are my everything, and I love you more with each passing day.
+
+Yours always,
+Me</div>
+                <p class="help-text">Click above to edit the love letter. Changes are saved locally.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MUSIC SECTION -->
+    <section id="music" class="section">
+        <div class="container">
+            <h2 class="section-title">Our Song</h2>
+            <p class="section-subtitle">The melody of our hearts</p>
+            
+            <div class="music-card">
+                <div class="music-artwork" id="musicArtwork">
+                    <span class="music-icon" id="musicIcon" aria-hidden="true">🎵</span>
+                    <img id="musicCover" alt="Selected song cover" hidden>
+                </div>
+                <p class="music-instruction">Choose a song and an optional cover for your special soundtrack</p>
+                <input type="file" id="musicInput" accept="audio/*" aria-label="Select music file">
+                <input type="file" id="musicCoverInput" accept="image/*" aria-label="Select music cover image">
+                <label for="musicInput" class="btn-music">Choose Music</label>
+                <label for="musicCoverInput" class="btn-music">Choose Cover</label>
+                <p class="selected-music" id="selectedMusic">No music selected</p>
+                <audio id="audioPlayer" controls class="audio-player" style="display: none;"></audio>
+                <p class="help-text music-status" id="musicStatus" role="status" aria-live="polite"></p>
+                <p class="help-text">Note: The music file stays on your device and is not uploaded anywhere.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SURPRISE SECTION -->
+    <section id="surprise" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">A Little Surprise</h2>
+            <p class="section-subtitle">Click the box to reveal our secret message</p>
+            
+            <div class="surprise-box" id="surpriseBox" tabindex="0" role="button" aria-label="Click for surprise">
+                <div class="surprise-content" id="surpriseContent">
+                    <p class="surprise-question">Click me!</p>
+                </div>
+                <div class="surprise-revealed" id="surpriseRevealed" style="display: none;">
+                    <p class="surprise-message">أنا بحبك أوي أوي ❤️💕 وكل يوم بحبك أكتر، وإنتِ أجمل حاجة حصلتلي في حياتي ❤️❤️</p>
+                </div>
+            </div>
+            <p class="help-text">You can customize this message in script.js</p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-text">Made with ❤️ for NarNory</p>
+            <p class="footer-subtext">A gift from the heart</p>
+            <p class="footer-note">This is a static scrapbook - your edits are saved in your browser's local storage</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
+

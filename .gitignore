@@ -1,0 +1,13 @@
+﻿*
+!.gitignore
+!index.html
+!README.md
+!css/
+!css/style.css
+!js/
+!js/script.js
+!assets/
+!assets/images/
+!assets/images/placeholder1.svg
+!assets/images/placeholder2.svg
+!assets/images/placeholder3.svg
